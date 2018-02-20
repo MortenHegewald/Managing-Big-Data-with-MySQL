@@ -1,0 +1,81 @@
+Week 3 QUIZ
+
+Question 7: What is the average amount of profit Dillard’s made per day?
+
+SELECT SUM(amt-(quantity*cost))/COUNT(DISTINCT saledate) as AvgSales
+FROM trnsact JOIN skstinfo
+ON trnsact.sku = skstinfo.sku AND trnsact.store = skstinfo.store
+WHERE trnsact.stype = 'P'
+
+Question 8: The store_msa table provides population statistics about the geographic location around a store. Using one query to retrieve your answer, how many MSAs are there within the state of North Carolina (abbreviated “NC”), and within these MSAs, what is the lowest population level (msa_pop) and highest income level (msa_income)?
+
+SELECT m.msa, m.msa_pop, m.msa_income
+FROM STORE_MSA m JOIN STRINFO s
+ON m.store = s.store
+WHERE s.state = 'NC'
+ORDER BY m.msa_pop DESC
+
+Question 9: What department (with department description), brand, style, and color brought in the greatest total amount of sales?
+
+SELECT sum(trnsact.amt) as total_sales, deptinfo.deptdesc, skuinfo.brand, skuinfo.style, skuinfo.color, deptinfo.dept
+FROM skuinfo 
+JOIN trnsact 
+ON trnsact.sku = skuinfo.sku
+JOIN deptinfo
+ON skuinfo.dept = deptinfo.dept
+GROUP BY deptinfo.deptdesc, skuinfo.brand, skuinfo.style, skuinfo.color, deptinfo.dept
+ORDER BY total_sales desc
+
+Question 10: How many stores have more than 180,000 distinct skus associated with them in the skstinfo table?
+
+SELECT count(distinct skstinfo.sku) AS Num_Of_SKU, skstinfo.store 
+FROM skstinfo
+HAVING Num_Of_SKU > 180000
+GROUP BY skstinfo.store
+ORDER BY Num_Of_SKU desc
+
+Question 11: Look at the data from all the distinct skus in the “cop” department with a “federal” brand and a “rinse wash” color. You'll see that these skus have the same values in some of the columns, meaning that they have some features in common.
+
+select distinct SKU, skuinfo.dept, deptdesc, brand, color, style, size, vendor, packsize from skuinfo
+JOIN deptinfo ON deptinfo.dept = skuinfo.dept 
+WHERE BRAND = 'FEDERAL' AND color = 'rinse wash'
+
+Question 12: How many skus are in the skuinfo table, but NOT in the skstinfo table?
+
+SELECT count(distinct skuinfo.sku)
+FROM skuinfo LEFT JOIN skstinfo
+ON skuinfo.sku = skstinfo.sku
+WHERE skstinfo.sku is NULL
+
+Question 13: In what city and state is the store that had the greatest total sum of sales?
+
+SELECT sum(amt), city, state, strinfo.store
+FROM trnsact JOIN strinfo
+ON trnsact.store = strinfo.store
+GROUP BY strinfo.store, city, state
+ORDER BY sum(amt) desc
+
+Question 14: Given Table A (first table to be entered in the query) and Table B (second table to be entered in the query) the query result shown below is a result of what kind of join?
+
+Left join
+
+Question 15: How many states have more than 10 Dillards stores in them?
+
+SELECT count(store) AS Num_Of_St , state
+FROM strinfo
+HAVING Num_Of_St > 10
+GROUP BY state
+
+Question 16: What is the suggested retail price of all the skus in the “reebok” department with the “skechers” brand and a “wht/saphire” color?
+
+SELECT sprice, orgprice, deptdesc, brand, color
+FROM trnsact 
+JOIN skuinfo ON trnsact.sku = skuinfo.sku 
+JOIN deptinfo ON skuinfo.dept = deptinfo.dept
+WHERE deptdesc = 'reebok' AND brand = 'skechers' AND color = 'wht/saphire'
+
+
+
+
+
+
